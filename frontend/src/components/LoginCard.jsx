@@ -19,9 +19,9 @@ import {
   import { useState } from 'react'
   import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons'
   import { useSetRecoilState } from "recoil";
-  import authScreenAtom from '../../atom/Authatom';
-  import useShowToast from '../../hooks/useShowToast';
-  import userAtom from '../../atom/userAtom';
+  import authScreenAtom from '../../atom/Authatom.js';
+  import useShowToast from '../../hooks/useShowToast.js';
+  import userAtom from '../../atom/userAtom.js';
   export default function LoginCard() {
     const [showPassword, setShowPassword] = useState(false)
     const setAuthScreen = useSetRecoilState(authScreenAtom);
