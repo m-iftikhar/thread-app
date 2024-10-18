@@ -2,6 +2,7 @@ import User from "../models/userModel.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utilis/helpers/generateTokenAndSetCookies.js";
 import mongoose from "mongoose";
+import { v2 as cloudinary } from "cloudinary";
 const signupUser = async (req, res) => {
   try {
     const { name, email, username, password } = req.body;
@@ -130,14 +131,14 @@ const updateUser = async (req, res) => {
 			user.password = hashedPassword;
 		}
 
-		// if (profilePic) {
-		// 	if (user.profilePic) {
-		// 		await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
-		// 	}
+		if (profilePic) {
+			if (user.profilePic) {
+				await cloudinary.uploader.destroy(user.profilePic.split("/").pop().split(".")[0]);
+			}
 
-		// 	const uploadedResponse = await cloudinary.uploader.upload(profilePic);
-		// 	profilePic = uploadedResponse.secure_url;
-		// }
+			const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+			profilePic = uploadedResponse.secure_url;
+		}
 
 		user.name = name || user.name;
 		user.email = email || user.email;
