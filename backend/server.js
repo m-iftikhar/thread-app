@@ -16,12 +16,10 @@ cloudinary.config({
     api_secret: process.env.CLOUDINARY_API_SECRET,
   });
 
-app.use(express.json());
-
-app.use(express.json({ limit: '10mb' }));  // Adjust the size as needed
+app.use(express.json({ limit: '50mb' }));  // Adjust the size as needed
 
 
-app.use(express.urlencoded({extended:true,limit:'10mb'}));  
+app.use(express.urlencoded({extended:true,limit:'50mb'}));  
 // app.use(express.urlencoded({ extended: false })) is a line in Express that helps the app understand data sent from forms. Setting extended: false means it will use a simple way to read that data
 app.use(cookieParser());
 // app.use(cookieParser()) is a line in Express that allows the app to read cookies from incoming requests. It helps in accessing cookie data easily, making it simpler to manage user sessions and preferences.

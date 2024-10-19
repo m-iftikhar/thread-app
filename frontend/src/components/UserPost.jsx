@@ -103,7 +103,7 @@ const UserPost = ({ likes, replies, postImg, postTitle }) => {
                 h={["300px", "400px", "500px"]} // Adjust height responsively
                 objectFit="cover" // Ensures the image covers the area
                 borderRadius="md" // Optional: Adds rounded corners
-                fallbackSrc="fallback-image-url.jpg" // Replace with a valid fallback image
+                fallbackSrc="/favicon.png" // Replace with a valid fallback image
               />
             </Box>
           )}

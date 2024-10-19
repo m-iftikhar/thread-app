@@ -1,8 +1,9 @@
-import { VStack, Flex, Box, Avatar, Text, Link, useToast,Button } from "@chakra-ui/react";
+import { VStack, Flex, Box, Avatar, Text, Link, useToast,Button,Image } from "@chakra-ui/react";
 import { BsInstagram } from "react-icons/bs";
 import { CgMoreO } from "react-icons/cg";
 import { Menu, MenuButton, MenuList, Portal, MenuItem } from "@chakra-ui/react";
 import useShowToast from "../../hooks/useShowToast";
+import { Modal, ModalOverlay, ModalContent, ModalBody, useDisclosure }from "@chakra-ui/react"; //new added
 import { useState } from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { useRecoilValue } from "recoil";
@@ -15,6 +16,8 @@ const UserHeader = ({ user }) => {
   );
   const showToast = useShowToast();
   const [updating, setUpdating] = useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isLoaded, setIsLoaded] = useState(false);
   const copyURL = () => {
     const currentURL = window.location.href;
     navigator.clipboard.writeText(currentURL).then(() => {
@@ -84,7 +87,27 @@ const UserHeader = ({ user }) => {
               base: "md",
               md: "xl",
             }}
-          />
+            cursor="pointer"
+            onClick={onOpen} // Open modal on click
+          /> 
+             <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+        <ModalOverlay />
+        <ModalContent bg="transparent" boxShadow="none"> {/* Transparent background to give focus to the image */}
+          <ModalBody p={0}>
+            <Box>
+              <Image
+                src={user.profilePic || "https://bit.ly/broken-link"}
+                alt={user.name}
+                w="full"
+                h="auto"
+                borderRadius="full"
+                onLoad={() => setIsLoaded(true)} // For adding loading state if needed
+                maxH="80vh" // Keep the image from being too tall
+              />
+            </Box>
+          </ModalBody>
+        </ModalContent>
+      </Modal>
         </Box>
       </Flex>
       <Text>{user.bio}</Text>
