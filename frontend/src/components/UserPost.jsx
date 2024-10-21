@@ -108,8 +108,17 @@ const UserPost = ({ likes, replies, postImg, postTitle }) => {
             </Box>
           )}
           <Flex gap={3} my={1}>
-            <Actions liked={liked} setLiked={setLiked} likes={likes} replies={replies} /> {/* Pass props to Actions */}
+            <Actions liked={liked} setLiked={setLiked} /> {/* Pass props to Actions */}
           </Flex>
+          <Flex gap={2} alignItems={"center"}>
+						<Text color={"gray.light"} fontSize='sm'>
+							{replies} replies
+						</Text>
+						<Box w={0.5} h={0.5} borderRadius={"full"} bg={"gray.light"}></Box>
+						<Text color={"gray.light"} fontSize='sm'>
+							{likes} likes
+						</Text>
+					</Flex>
         </Flex>
       </Flex>
     </Link>
