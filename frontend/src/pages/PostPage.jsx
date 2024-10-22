@@ -148,13 +148,13 @@ const PostPage = ({ likes, replies }) => {
       <Divider my={4} />
 
       {/* Uncomment to display replies */}
-      {/* {currentPost.replies.map((reply) => (
+      {currentPost.replies.map((reply) => (
         <Comment
           key={reply._id}
           reply={reply}
           lastReply={reply._id === currentPost.replies[currentPost.replies.length - 1]._id}
         />
-      ))} */}
+      ))}
     </>
   );
 };
