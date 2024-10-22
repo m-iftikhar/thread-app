@@ -3,11 +3,11 @@ import { useSetRecoilState } from "recoil";
 import userAtom from "../../atom/userAtom";
 import useShowToast from "../../hooks/useShowToast";
 import { FiLogOut } from "react-icons/fi";
-
+import { useNavigate } from 'react-router-dom';
 const LogoutButton = () => {
 	const setUser = useSetRecoilState(userAtom);
 	const showToast = useShowToast();
-
+	const navigate = useNavigate();
 	const handleLogout = async () => {
 		try {
 			const res = await fetch("/api/users/logout", {
@@ -25,6 +25,7 @@ const LogoutButton = () => {
 
 			localStorage.removeItem("user-threads");
 			setUser(null);
+			navigate('/auth');
 		} catch (error) {
 			showToast("Error", error, "error");
 		}
