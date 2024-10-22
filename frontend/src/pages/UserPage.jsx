@@ -5,66 +5,45 @@ import useShowToast from "../../hooks/useShowToast";
 import { useEffect, useState } from "react";
 import { Flex, Spinner } from "@chakra-ui/react";
 import Post from "../components/Posts";
-
+import postsAtom from "../../atom/postAtom";
+import useGetUserProfile from "../../hooks/useGetUserProfile";
+import { useRecoilState } from "recoil";
 const UserPage = () => {
-  const [user, setUser] = useState(null);
-  const [posts, setPosts] = useState([]); // State to hold user posts
-  const [loading, setLoading] = useState(true);
-  const [fetchingPosts, setFetchingPosts] = useState(true); // State for fetching posts
-  const { username } = useParams();
-  const showToast = useShowToast();
+  const { user, loading } = useGetUserProfile();
+	const { username } = useParams();
+	const showToast = useShowToast();
+	const [posts, setPosts] = useRecoilState(postsAtom);
+	const [fetchingPosts, setFetchingPosts] = useState(true);
 
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const res = await fetch(`/api/users/profile/${username}`);
-        const data = await res.json();
-        if (data.error) {
-          showToast("Error", data.error, "error");
-          return;
-        }
-        setUser(data);
-      } catch (error) {
-        showToast("Error", error.message, "error");
-      } finally {
-        setLoading(false);
-      }
-    };
-    getUser();
-  }, [username, showToast]);
+	useEffect(() => {
+		const getPosts = async () => {
+			if (!user) return;
+			setFetchingPosts(true);
+			try {
+				const res = await fetch(`/api/posts/user/${username}`);
+				const data = await res.json();
+				console.log(data);
+				setPosts(data);
+			} catch (error) {
+				showToast("Error", error.message, "error");
+				setPosts([]);
+			} finally {
+				setFetchingPosts(false);
+			}
+		};
 
-  useEffect(() => {
-    const getUserPosts = async () => {
-      try {
-        setFetchingPosts(true);
-        const res = await fetch(`/api/posts/user/${username}`); // Update this URL based on your API
-        const data = await res.json();
-        if (data.error) {
-          showToast("Error", data.error, "error");
-          return;
-        }
-        setPosts(data); // Assuming data is an array of posts
-      } catch (error) {
-        showToast("Error", error.message, "error");
-      } finally {
-        setFetchingPosts(false);
-      }
-    };
+		getPosts();
+	}, [username, showToast, setPosts, user]);
 
-    if (user) {
-      getUserPosts();
-    }
-  }, [user, username, showToast]);
+	if (!user && loading) {
+		return (
+			<Flex justifyContent={"center"}>
+				<Spinner size={"xl"} />
+			</Flex>
+		);
+	}
 
-  if (loading) {
-    return (
-      <Flex justifyContent={"center"}>
-        <Spinner size={"xl"} />
-      </Flex>
-    );
-  }
-
-  if (!user) return <h1>User not found</h1>;
+	if (!user && !loading) return <h1>User not found</h1>;
 
   return (
     <div>
