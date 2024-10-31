@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import { v2 as cloudinary } from "cloudinary";
+import messageRoutes from './routes/messageRoutes.js'
 dotenv.config();
 connectDB();
 const app=express();
@@ -25,6 +26,7 @@ app.use(cookieParser());
 // app.use(cookieParser()) is a line in Express that allows the app to read cookies from incoming requests. It helps in accessing cookie data easily, making it simpler to manage user sessions and preferences.
 app.use("/api/users", userRoutes);
 app.use("/api/posts", postRoutes);
+app.use("/api/messages", messageRoutes);
 
 
 
