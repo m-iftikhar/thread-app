@@ -17,7 +17,7 @@ import useShowToast from "../../hooks/useShowToast.js";
 import { conversationsAtom, selectedConversationAtom } from "../../atom/messagesAtom.js";
 import userAtom from "../../atom/userAtom.js";
 import { useRecoilState, useRecoilValue } from "recoil";
-
+import { useSocket } from "../../context/socketContext.jsx";
 const ChatPage = () => {
   const [searchingUser, setSearchingUser] = useState(false);
   const [loadingConversations, setLoadingConversations] = useState(true);
@@ -26,7 +26,7 @@ const ChatPage = () => {
   const [searchText, setSearchText] = useState("");
   const showToast = useShowToast();
   const currentUser = useRecoilValue(userAtom);
-
+  const { socket, onlineUsers } = useSocket();
   useEffect(() => {
     // Fetch conversations when the component mounts
     const getConversations = async () => {
@@ -140,21 +140,26 @@ const ChatPage = () => {
               </Button>
             </Flex>
           </form>
-          {loadingConversations ? (
-            Array.from({ length: 5 }).map((_, i) => (
-              <Flex key={i} gap={4} alignItems="center" p="1" borderRadius="md">
-                <SkeletonCircle size="10" />
-                <Flex w="full" flexDirection="column" gap={3}>
-                  <Skeleton h="10px" w="80px" />
-                  <Skeleton h="8px" w="90%" />
-                </Flex>
-              </Flex>
-            ))
-          ) : (
-            conversations.map((conversation) => (
-              <Conversation key={conversation._id} conversation={conversation} />
-            ))
-          )}
+          {loadingConversations &&
+						[0, 1, 2, 3, 4].map((_, i) => (
+							<Flex key={i} gap={4} alignItems={"center"} p={"1"} borderRadius={"md"}>
+								<Box>
+									<SkeletonCircle size={"10"} />
+								</Box>
+								<Flex w={"full"} flexDirection={"column"} gap={3}>
+									<Skeleton h={"10px"} w={"80px"} />
+									<Skeleton h={"8px"} w={"90%"} />
+								</Flex>
+							</Flex>
+						))}
+         {!loadingConversations &&
+						conversations.map((conversation) => (
+							<Conversation
+								key={conversation._id}
+								isOnline={onlineUsers.includes(conversation.participants[0]._id)}
+								conversation={conversation}
+							/>
+						))}
         </Flex>
         {!selectedConversation._id ? (
           <Flex
