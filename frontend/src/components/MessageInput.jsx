@@ -2,15 +2,15 @@ import { Input, InputGroup, InputRightElement } from "@chakra-ui/react";
 import { IoSendSharp } from "react-icons/io5";
 import { useState } from "react";
 import useShowToast from "../../hooks/useShowToast";
-import { selectedConversationAtom,conversationsAtom } from "../../atom/messagesAtom";
-import { useRecoilValue,useRecoilState } from "recoil";
+import { selectedConversationAtom, conversationsAtom } from "../../atom/messagesAtom";
+import { useRecoilValue, useRecoilState } from "recoil";
 
 const MessageInput = ({ setMessages }) => {
   const [messageText, setMessageText] = useState("");
   const [isSending, setIsSending] = useState(false);
   const showToast = useShowToast();
   const selectedConversation = useRecoilValue(selectedConversationAtom);
-  const setConversations = useRecoilState(conversationsAtom);
+  const [conversations, setConversations] = useRecoilState(conversationsAtom); // Destructure correctly
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -39,24 +39,27 @@ const MessageInput = ({ setMessages }) => {
         return;
       }
 
-      setMessages((messages) => [...messages, data]);
+      // Update messages state
+      setMessages((prevMessages) => [...prevMessages, data]);
+
+      // Update conversations state
       setConversations((prevConvs) => {
-				const updatedConversations = prevConvs.map((conversation) => {
-					if (conversation._id === selectedConversation._id) {
-						return {
-							...conversation,
-							lastMessage: {
-								text: messageText,
-								sender: data.sender,
-							},
-						};
-					}
-					return conversation;
-				});
-				return updatedConversations;
-			});
-			setMessageText("");
-			// setImgUrl("");
+        return prevConvs.map((conversation) => {
+          if (conversation._id === selectedConversation._id) {
+            return {
+              ...conversation,
+              lastMessage: {
+                text: messageText,
+                sender: data.sender, // Ensure sender is correctly assigned
+              },
+            };
+          }
+          return conversation;
+        });
+      });
+
+      // Clear input
+      setMessageText("");
     } catch (error) {
       showToast("Error", error.message, "error");
     } finally {
