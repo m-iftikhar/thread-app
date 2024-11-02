@@ -5,37 +5,29 @@ import cookieParser from 'cookie-parser';
 import userRoutes from './routes/userRoutes.js';
 import postRoutes from './routes/postRoutes.js';
 import { v2 as cloudinary } from "cloudinary";
-import messageRoutes from './routes/messageRoutes.js'
-dotenv.config();
-connectDB();
-const app=express();
-const PORT = process.env.PORT || 5000;
+import messageRoutes from './routes/messageRoutes.js';
+import { server, app } from "./socket/socket.js"; // Import both server and app if needed
 
+dotenv.config(); // Load environment variables from .env file
+connectDB(); // Connect to the database
+
+// Middleware setup
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(cookieParser());
+
+// Cloudinary configuration
 cloudinary.config({
     cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
-  });
+});
 
-app.use(express.json({ limit: '50mb' }));  // Adjust the size as needed
-
-
-app.use(express.urlencoded({extended:true,limit:'50mb'}));  
-// app.use(express.urlencoded({ extended: false })) is a line in Express that helps the app understand data sent from forms. Setting extended: false means it will use a simple way to read that data
-app.use(cookieParser());
-// app.use(cookieParser()) is a line in Express that allows the app to read cookies from incoming requests. It helps in accessing cookie data easily, making it simpler to manage user sessions and preferences.
-app.use("/api/users", userRoutes);
+// Routes
+app.use("/api/users", userRoutes); 
 app.use("/api/posts", postRoutes);
 app.use("/api/messages", messageRoutes);
 
-
-
-
-
-
-
-
-
-
-
-app.listen(PORT, () => console.log(`Server started at http://localhost:${PORT}`));
+// Start the server
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => console.log(`Server started at http://localhost:${PORT}`));
