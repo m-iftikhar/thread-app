@@ -13,7 +13,7 @@ import userAtom from "../../atom/userAtom.js";
 import { useRecoilValue,useRecoilState } from "recoil";
 import {BsCheck2All,BsFillImageFill} from "react-icons/bs";
 import { selectedConversationAtom } from "../../atom/messagesAtom.js";
-const Conversation = ({ conversation }) => {
+const Conversation = ({ conversation, isOnline}) => {
   const user = conversation.participants[0];
   const lastMessage = conversation.lastMessage;
   const currentUser = useRecoilValue(userAtom);
@@ -50,7 +50,7 @@ const Conversation = ({ conversation }) => {
           src={user.profilePic || "https://bit.ly/broken-link"}
           name={user.username}
         >
-          <AvatarBadge boxSize="1em" bg="green.500" />
+         {isOnline ? <AvatarBadge boxSize='1em' bg='green.500' /> : ""}
         </Avatar>
       </WrapItem>
       <Stack direction="column" spacing={0} fontSize="sm">
