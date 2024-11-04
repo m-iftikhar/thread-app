@@ -1,5 +1,5 @@
 import Message from "../models/messageModel.js";
-// import { getRecipientSocketId, io } from "../socket/socket.js";
+import { getRecipientSocketId, io } from "../socket/socket.js"
 // import { v2 as cloudinary } from "cloudinary";
 import Conversation from "../models/conversation.Model.js";
 async function sendMessage(req, res) {
@@ -47,10 +47,10 @@ async function sendMessage(req, res) {
     
 
 
-//         const recipientSocketId = getRecipientSocketId(recipientId);
-// 		if (recipientSocketId) {
-// 			io.to(recipientSocketId).emit("newMessage", newMessage);
-// 		}
+        const recipientSocketId = getRecipientSocketId(recipientId);
+		if (recipientSocketId) {
+			io.to(recipientSocketId).emit("newMessage", newMessage);
+		}
 
 		res.status(201).json(newMessage);
 	} catch (error) {

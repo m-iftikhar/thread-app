@@ -12,10 +12,11 @@ import {
   import MessageInput from "./MessageInput";
   import useShowToast from "../../hooks/useShowToast";
   import { selectedConversationAtom } from "../../atom/messagesAtom";
-  import { useEffect,useState } from "react";
+  import { useEffect, useState, useRef } from "react";
   import userAtom from "../../atom/userAtom";
   import { useRecoilState,useRecoilValue } from "recoil";
   import { conversationsAtom } from "../../atom/messagesAtom";
+  import { useSocket } from "../../context/socketContext";
   const MessageContainer = () => {
     const showToast = useShowToast();
     const selectedConversation = useRecoilValue(selectedConversationAtom);
@@ -23,9 +24,44 @@ import {
     const [messages, setMessages] = useState([]);
     const currentUser = useRecoilValue(userAtom);
     const setConversations = useRecoilState(conversationsAtom);
+    const { socket } = useSocket();
+    const messageEndRef = useRef(null);
+
+    useEffect(() => {
+      socket.on("newMessage", (message) => {
+        if (selectedConversation._id === message.conversationId) {
+          setMessages((prev) => [...prev, message]);
+        }
   
+        // make a sound if the window is not focused
+        // if (!document.hasFocus()) {
+        //   const sound = new Audio(messageSound);
+        //   sound.play();
+        // }
+  
+        setConversations((prev) => {
+          const updatedConversations = prev.map((conversation) => {
+            if (conversation._id === message.conversationId) {
+              return {
+                ...conversation,
+                lastMessage: {
+                  text: message.text,
+                  sender: message.sender,
+                },
+              };
+            }
+            return conversation;
+          });
+          return updatedConversations;
+        });
+      });
+  
+      return () => socket.off("newMessage");
+    }, [socket, selectedConversation, setConversations]);
 
-
+    useEffect(() => {
+      messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
     useEffect(() => {
       const getMessages = async () => {
         setLoadingMessages(true);
@@ -96,7 +132,7 @@ import {
 						<Flex
 							key={message._id}
 							direction={"column"}
-							// ref={messages.length - 1 === messages.indexOf(message) ? messageEndRef : null}
+							ref={messages.length - 1 === messages.indexOf(message) ? messageEndRef : null}
 						>
 							<Message message={message} ownMessage={currentUser._id === message.sender} />
 						</Flex>
