@@ -8,6 +8,7 @@ import {
   WrapItem,
   useColorModeValue,
   useColorMode,
+  Box,
 } from "@chakra-ui/react";
 import userAtom from "../../atom/userAtom.js";
 import { useRecoilValue,useRecoilState } from "recoil";
@@ -59,9 +60,9 @@ const Conversation = ({ conversation, isOnline}) => {
         </Text>
         <Text fontSize={"xs"} display={"flex"} alignItems={"center"} gap={1}>
 					{currentUser._id === lastMessage.sender ? (
-						// <Box color={lastMessage.seen ? "blue.400" : ""}>
+						<Box color={lastMessage.seen ? "blue.400" : ""}>
 							<BsCheck2All size={16} />
-						// </Box>
+						 </Box>
 					) : (
 						""
 					)}
