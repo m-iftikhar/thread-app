@@ -2,7 +2,7 @@ import { Button, Text } from "@chakra-ui/react";
 import useShowToast from "../../hooks/useShowToast";
 import useLogout from "../../hooks/uselogout";
 
-export const SettingsPage = () => {
+export default function SettingsPage () {
 	const showToast = useShowToast();
 	const logout = useLogout();
 
