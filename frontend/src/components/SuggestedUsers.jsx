@@ -14,13 +14,11 @@ const SuggestedUsers = () => {
 			try {
 				const res = await fetch("/api/users/suggested");
 				const data = await res.json();
-				if (data.error) {
-					showToast("Error", data.error, "error");
-					return;
-				}
-				setSuggestedUsers(data);
+				console.log("API Response:", data); // 🔍 Check the response structure
+				setSuggestedUsers(Array.isArray(data) ? data : []);
 			} catch (error) {
 				showToast("Error", error.message, "error");
+				setSuggestedUsers([]);
 			} finally {
 				setLoading(false);
 			}
@@ -35,7 +33,12 @@ const SuggestedUsers = () => {
 				Suggested Users
 			</Text>
 			<Flex direction={"column"} gap={4}>
-				{!loading && suggestedUsers.map((user) => <SuggestedUser key={user._id} user={user} />)}
+				{!loading && Array.isArray(suggestedUsers) && suggestedUsers.length > 0 ? (
+					suggestedUsers.map((user) => <SuggestedUser key={user._id} user={user} />)
+				) : (
+					!loading && <Text>No suggested users available.</Text>
+				)}
+
 				{loading &&
 					[0, 1, 2, 3, 4].map((_, idx) => (
 						<Flex key={idx} gap={2} alignItems={"center"} p={"1"} borderRadius={"md"}>
